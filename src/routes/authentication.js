@@ -26,7 +26,9 @@ app.get('/login', (request, response) => {
 })
 
 app.post('/login', (request, response) => {
-  response.render('login', {message: null})
+  const { email} = request.body
+  const { password } = request.body
+  //RUN BCRYPT COMPARE HERE
 })
 
 app.post('/signup', (request, response) => {
@@ -39,8 +41,12 @@ app.post('/signup', (request, response) => {
       if(user) {
         response.render('login', {message: 'User already exists, please login'} )
       } else {
-        register(name, email, password)
-        response.send('You are signed up')
+        bcrypt
+          .hash(password, saltRounds)
+          .then(function (hash) {
+            register(name, email, hash)
+            response.send('You are signed up')
+          })
       }
     }).catch(console.error) 
 })
